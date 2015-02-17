@@ -1,2 +1,2 @@
 # snowduino
-Arduino project for server based communication between arduino dot matrix and website.
+Arduino project for web server based communication between arduino dot matrix and website.
