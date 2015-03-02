@@ -1,0 +1,29 @@
+http://playground.arduino.cc/Linux/Ubuntu
+found that I'm running ubuntu 14.10 by running
+>> cat /etc/*-release
+
+installed the package
+>> sudo apt-get update
+>> sudo apt-get install arduino arduino-core
+
+downloaded the arduino IDE
+http://arduino.cc/en/Main/Software
+unzipped it and moved it to my projects/dependencies folder
+
+allowed x11 forwarding
+>> sudo apt-get install xauth
+>> sudo sublime-text /etc/ssh/sshd_config
+   Cntrl-F X11Forwarding, set it to yes
+
+added price to the dialout group
+>> sudo usermod -a -G dialout price
+
+installed tmux
+>> sudo apt-get install tmux
+
+Copied code from http://arduino.cc/en/tutorial/blink to the arduino ide after opening ./arduino.  An error uploading the code led me to http://www.arduino.cc/en/Guide/Troubleshooting#upload
+
+Connected the arduino to debian snow instead
+
+>> sudo apt-get purge arduino-core
+deleted Arduino directory from my home folder

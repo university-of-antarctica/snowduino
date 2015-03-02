@@ -1,0 +1,54 @@
+
+ELECTRICITY:
+positive terminal: where current flows from
+ground: where current flows to 
+
+ETHERNET SHIELD
+	http://arduino.cc/en/Reference/Ethernet
+
+	IP  address: 192.168.1.26
+		IPAddress ip(192, 168, 1, 26);
+	MAC address: 00:1D:FE:EA:39:17
+		byte mac[] = { 0x00, 0x1D, 0xFE, 0xEA, 0x39, 0x19 };
+
+	TESTING
+		tested with code from http://arduino.cc/en/Tutorial/ChatServer
+		replaced IP and MAC addresses with appropriate values above
+		uploaded the program
+
+		telnet'ed in to snowduino
+		>> telnet
+		>> open 192.168.1.26
+		>> whatever nonsense that I want to say
+		>> ...
+		>> Ctrl+] Enter //to exit
+
+		telnet'ing back into snowduino has a problem
+		each letter i type is doubled and newlines replace with ^M
+		this all occurs on my command line, nothing is printed
+		I believe this is because it's not a telnet server, which is another piece of sample code available
+
+	CONTROL LED VIA WEB PAGE
+		http://startingelectronics.com/tutorials/arduino/ethernet-shield-web-server-tutorial/web-server-LED-control/
+
+		pasted code into a sketch, replaced the IP and MAC addresses and it worked
+		I happened to have an LED attached to pin 2, as they did in this example
+
+		I'm having trouble on the webpage reading the state of the button and updating the page properly.
+
+		I found out that pin 1 is not to be used if the line Serial.begin(9600); appears in the code.  Apparently it is to be used for diagnostics?
+		moving the button to pin 5 made everything work how I expected!
+
+		refreshing breaks the system and i have to restart it.  Probably just the code expects 
+
+
+CODING
+	const int redLedPin = 2;  //use consts to manage pin #s as variables
+	const int buttonPin = 1;  
+	boolean buttonState = 0;  //use variables that change as well.  INT?
+	digitalWrite(redLedPin, HIGH); // turn on the red LED
+	buttonState = digitalRead(buttonPin); //read the value of pin 1
+	if (buttonState == HIGH){ doStuff(); } //do something about the button
+	delay(1000); // wait 1 second
+	* serial.begin(9600) makes pin 1 unusable by other stuff
+	variables are in scope inside of methods

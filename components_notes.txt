@@ -1,0 +1,144 @@
+
+I used this link to indentify parts:
+http://www.sunfounder.com/index.php?c=show&id=4&model=Super%20Kit
+
+
+////////////////////////////////////////////////////////////////////
+ADVANCED COMPONENTS
+////////////////////////////////////////////////////////////////////
+
+	DOT MATRIX DISPLAY:
+		8x8 dots on a square, 16 legs
+
+	7-SEGMENT CHARACTER DISPLAY x2:
+		these look like an alarm clock 8 with a period, 10 legs
+
+	Accelerometer ADXL335:
+		2x3cm blue chip with x,y,z axes on it, 5 legs
+
+	LCD 1602:
+		3x8cm rectangle with screen
+		http://arduino.cc/en/Tutorial/LiquidCrystal
+		we need to solder header pins
+
+	DC MOTOR:
+		round metal box with a yellow end and a pole end
+
+	ROTARY ENCODER:
+		knob with 7 prongs
+		ours has 20 different settings in a full rotation
+		it can also be pressed like a button
+		http://playground.arduino.cc/Main/RotaryEncoders#Intro
+
+	TRIM POT - 50k:
+		knob with 3 prongs
+
+////////////////////////////////////////////////////////////////////
+TECHNICAL COMPONENTS:
+////////////////////////////////////////////////////////////////////
+
+	H-BRIDGE L293D:
+		1x4cm black rectangle with 16 legs, small half-circle depression on one end, circle of different texture on the opposite side
+		has something to do with controlling the motor
+		http://www.robotplatform.com/howto/L293/motor_driver_1.html
+
+	SHIFT REGISTER 74HC595N x2:
+		1x4cm black rectangle with 16 legs, small half-oval depression on one end
+		takes serial input from 3 microcontroller i/o pins to control up to 8 output pins in parallel, allowing the microcontroller to control more stuff.
+		https://www.sparkfun.com/products/733 video explanation
+
+	OPTOCOUPLER 4N35 x2:
+		1x2cm white rectangle with 6 legs
+
+	TIMER 555:
+		1x2cm black rectangle with 8 legs
+
+
+////////////////////////////////////////////////////////////////////
+SMALL COMPONENTS:
+////////////////////////////////////////////////////////////////////
+
+	PUSH-BUTTON SMALL x5: 
+
+	SWITCH:
+		sliding 2-option switch on a .5x1cm rectangle with 5 legs
+
+	DIODE RECTIFIERS x2:
+		.5 cm black tube along a wire
+
+	TRANSISTOR PNP x2:
+		black half-circle shape with 3 legs
+		labeled S8550, slightly larger
+
+	TRANSISTOR NPN x2:
+		black half-circle shape with 3 legs
+		labeled S8505, slightly smaller
+
+	CAPACITORS:
+		small reddish circles with a # on them and 2 legs
+		smaller ones labeled '103' are 10  nf (nano-farads)
+		larger  ones labeled '104' are 100 nf
+
+////////////////////////////////////////////////////////////////////
+BASIC COMPONENTS:
+////////////////////////////////////////////////////////////////////
+
+JUMPERS:
+	these are the colored insulated wires (3"-6") with uninsulated ends with a larger black section at the end.
+	male to male
+	*Don't pull too hard, the black part will come off!
+
+HEADER PINS x40:
+	this is the strip of many 1cm metal pins
+	they get soldered to chips with holes in order to be able to plug them into a breadboard
+
+BREADBOARD:
+	http://www.ladyada.net/learn/arduino/lesson3.html
+	ours has 30 5-hole-row pairs and a set of double rails on either side
+
+LEDS:
+	diodes (current can only flow in one direction through it)
+	positive side has a longer leg (lead)(like leed, not led)
+	negative side has a bigger piece of metal in the interior
+
+	will be damaged if used without at least 100 ohm resistance in series.
+	will not be damaged by using in the wrong direction
+
+	different LEDs may require diferent ohms or something (usually in the 220-1k range)
+
+	16x red
+	2x white, green, yellow
+
+RESISTORS:
+	http://en.wikipedia.org/wiki/Electronic_color_code#Resistor_color-coding
+
+	The code has an orientation
+	But the resistor does not!
+	I find it's easier to tell by which end has less uncolored space from the tip
+	the last band is closer to the edge than the first band
+
+	We can use a multimeter to check them
+
+	List:
+		1K Ohms (blue)
+		brown black black brown, brown
+		    1     0     0   *10   +-1%
+		    band 5 is closer to the edge than band 1
+
+		10K Ohms (blue)
+		brown black black   red, brown
+		    1     0     0  *100   +-1%
+		  	band 1 is closer to the edge than band 5
+
+
+		brown black yellow gold
+		100000 +- 5%
+
+		red red black black brown
+		220 +- 1%
+
+		brown black black red red (if the above is reversed)
+		10000 +- 2% 
+
+	resistors have a wattage rating, but I doubt this is anything we can/should worry about
+
