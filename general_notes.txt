@@ -9,7 +9,7 @@ ETHERNET SHIELD
 	IP  address: 192.168.1.26
 		IPAddress ip(192, 168, 1, 26);
 	MAC address: 00:1D:FE:EA:39:17
-		byte mac[] = { 0x00, 0x1D, 0xFE, 0xEA, 0x39, 0x19 };
+		byte mac[] = { 0x00, 0x1D, 0xFE, 0xEA, 0x39, 0x17 };
 
 	TESTING
 		tested with code from http://arduino.cc/en/Tutorial/ChatServer
@@ -39,7 +39,42 @@ ETHERNET SHIELD
 		I found out that pin 1 is not to be used if the line Serial.begin(9600); appears in the code.  Apparently it is to be used for diagnostics?
 		moving the button to pin 5 made everything work how I expected!
 
-		refreshing breaks the system and i have to restart it.  Probably just the code expects 
+		refreshing breaks the system and i have to restart it.  Probably just the code doesn't handle a second connection or something, not sure.
+
+		I've had trouble with this project and it seems that many times when I'm having trouble getting the red led to do what I expect, it's because the wiring has gone a little loose and even though the pin is HIGH, the LED doesn't turn on.  I'll need to take this into consideration, either using pin 13 or testing the LED whenever I start.  OR using other types of feedback.
+
+		now when I visit http://192.168.1.26/ it says Connecting... and doesn't connect even though the button input affects the program.  It turns out that price was updating the router's firmware.
+
+		It began working again and when I tried to upload a new sketchbook, it stopped responding; again it says Connecting...  I tried unplugging and replugging it in as well as reuploading many times. http://forum.arduino.cc/index.php?topic=99001.0 mentions the possibility that the declaration of the ipaddress is syntactically wrong, but it has worked before.  I tried rewriting it anyway to no avail.
+
+		I googled around and found that someone with a similar-ish error had better luck when they tried using DHCP.  It turns out that when I use DHCP, the IP address is set to 1.10 instead of 1.26.  Maybe this was happening previously?  I was able to telnet in on the first try to 1.10.  port 80 also works it seems.
+
+		I had some trouble working with HTTP requests because a request for the favicon is sent right after the normal request, so having an 'else' statement for when you don't find something in a request is likely to always happen in the request for the favicon.
+
+		oh shit
+		chrome tries to save time by sending an http request on URLs that I haven't even hit enter on, just when I type them into the omnibox.
+
+		i switched to firefox to try to avoid some of this sort of problem.
+		Note to self, storing large strings like HTML should be done with program memory instead of SRAM: http://www.arduino.cc/en/Reference/PROGMEM
+
+		I learned that you can do multiline strings by putting quotes around each line. Better add \n at the end though, and escape internal quotes.  I thought i might need to delay() for more than 1 for the server to respond when it was giving me some internal server errors, but it doesn't seem to be the ticket.  
+		Now I'm struggling with getting String.indexOf() to correctly detect my GET parameters
+
+		My main problem lies with passing a string as an argument in C.  Also, checking the request for something like 'on' is falsely matching with 'Connection' in the HTTP request.
+
+		don't try to concatenate literal strings "like"+"this" as they are character arrays.
+
+		I reverted to passing a String around, and added a & to the parameter.  I note that doing String request = String(req) where req is the name of the parameter ended up not working.  not sure why.  But now the request is getting corrupted when it changes scope. I should investigate http://playground.arduino.cc/Code/AvailableMemory.  
+
+		I spent a long time facing indexOf>-1 not giving me the results that I expected.  It turns out that the third of these print statements is the only one that is -1 when blinkLED is not in the request.
+			  String x = "blinkLED";
+		      Serial.print(request.indexOf(String("blinkLED")));
+		      Serial.print(request.indexOf("blinkLED"));
+		      Serial.print(request.indexOf(x));
+
+		Actually printing out strings like 'x' in that example is giving me the empty string later on.  That's why it has been matching at location 0 instead of -1.  This has got to be a memory problem.
+
+
 
 
 CODING
