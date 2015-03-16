@@ -102,10 +102,10 @@ void loop()
                 // last line of client request is blank and ends with \n
                 // respond to client only after last line received
                 if (c == '\n' && currentLineIsBlank) {
-                    Serial.println("received request: "+HTTP_req);
-                    //respondToRequest(client,HTTP_req);
-                    sprintf(outBuf,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n<html><h1><HELLO></h1></html>");
-                    client.write(outBuf);
+                    Serial.println("received request:\n:BEGIN:\n"+HTTP_req+":END:");
+                    respondToRequest(client,HTTP_req);
+                    //sprintf(outBuf,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n<html><h1><HELLO></h1></html>");
+                    //client.write(outBuf);
                     break;
                 }
                 // every line of text received from the client ends with \r\n
@@ -130,15 +130,20 @@ void loop()
 
 void respondToRequest(EthernetClient client, String & request){
   
-    //Serial.println("request: "+request);
-    /*
-    client.println("HTTP/1.1 200 OK");
-    client.println("Content-Type: text/html");
-    client.println("Connection: close");  // the connection will be closed after completion of the response
-    //client.println("Refresh: 5");  // refresh the page automatically every 5 sec
-    client.println();
-    client.println("<!DOCTYPE HTML>");
-    client.println("<html>");
-    client.println("<body>");
-    client.println("<h1>HELLO</h1></body></html>");*/
+  
+                client.println("HTTP/1.1 200 OK");
+                client.println("Content-Type: text/html");
+                client.println("Connection: close");
+                //client.println("Refresh: 1");
+                client.println();
+                client.println("<!DOCTYPE html>");
+                client.println("<html>");
+                client.println("<head>");
+                client.println("<title>Arduino LED Control</title>");
+                client.println("</head>");
+                client.println("<body>");
+                client.println("<h1>HELLO</h1>");
+  
+  
+  
 }

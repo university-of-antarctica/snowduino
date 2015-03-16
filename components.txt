@@ -10,6 +10,7 @@ ADVANCED COMPONENTS
 	DOT MATRIX DISPLAY:
 		8x8 dots on a square, 16 legs
 		http://arduino.cc/en/Tutorial/RowColumnScanning
+		http://www.instructables.com/id/LED-Dot-Matrix-Display-1/
 
 	7-SEGMENT CHARACTER DISPLAY x2:
 		these look like an alarm clock 8 with a period, 10 legs
@@ -101,8 +102,10 @@ LEDS:
 	diodes (current can only flow in one direction through it)
 	positive side has a longer leg (lead)(like leed, not led)
 	negative side has a bigger piece of metal in the interior
+	cathode is the negative side and has a flat part on the side
+	anode   is the positive side
 
-	will be damaged if used without at least 100 ohm resistance in series.
+	*will be damaged if used without at least 100 ohm resistance in series.
 	will not be damaged by using in the wrong direction
 
 	different LEDs may require diferent ohms or something (usually in the 220-1k range)

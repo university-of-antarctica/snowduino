@@ -74,8 +74,56 @@ ETHERNET SHIELD
 
 		Actually printing out strings like 'x' in that example is giving me the empty string later on.  That's why it has been matching at location 0 instead of -1.  This has got to be a memory problem.
 
+		(3/16)
+		http://arduino.cc/en/Tutorial/Memory explains this well
+
+		I set up a simple test for a fresh dhcp server without all the LED stuff and no fancy web page to revisit my issues with the memory limitations in mind (using PROGMEM).  Before doing anything fancy I just set up the DHCP and it was not working out.  I added Serial.println statements to debug to see when we actually connected to a client with server.available().  The program must have looped for 45 seconds before it actually started responding to http requests made from my laptop, then started working perfectly fine. ....
+		After writing this down, it is no longer responding again.
+		I tried with firefox (had been using chrome) and still no response, although Serial keeps printing 'loop' so I know it isn't hanging?
+		I reuploaded the sketch and it is still not recognizing clients.
+		I removed the loop print statement for fear that it was getting in the way of recognizing clients, but it doesn't seem to have helped.
+
+		... is there any chance that a client is connected but sends 0 bytes?
+		It does seem like if i type in a wrong IP address, firefox tells me that Firefox can't establish a connection to the server at 192.168.1.113.
+		Whereas it is a 'server took too long to respond' on the correct IP address.
+
+		http://forum.arduino.cc/index.php?topic=85342.0 seems to have some good info
+
+		a variety of sites suggest removing the serial.print statements and serial.begin statement...
+		they also suggest some lines to include if you have an SD card in the arduino.
+
+		power issues are possible but as far as i know more likely with the wall wart than with usb power.
+
+		** It turns out that my laptop just needed to be connected to DOTRS instead of AIAILOVESBANANAS!
 
 
+
+
+
+
+
+MEMORY (updated 3/16)
+	from http://arduino.cc/en/Tutorial/Memory
+
+	Flash memory (program space), is where the Arduino sketch is stored.
+	SRAM (static random access memory) is where the sketch creates and manipulates variables when it runs.
+	EEPROM is memory space that programmers can use to store long-term information
+
+	Flash  32k bytes (of which .5k is used for the bootloader)
+	SRAM   2k bytes
+	EEPROM 1k byte
+
+	A char[] is stored in SRAM, and at 1 byte per char, it takes only 2048 to exhaust all of SRAM.
+	The types of errors that you encounter when SRAM is exhausted are subtle and confusing.
+
+	We can store static strings that don't need to be modified in flash memory which has much more space using the PROGMEM keyword
+
+	http://www.arduino.cc/en/Reference/PROGMEM shows an example program that uses the PROGMEM keyword.  Testing it has shown me that the sizes of the strings stored in PROGMEM do take up a byte per character in the program memory space.  With small strings the binary sketch size is about 2000/32000 bytes, and with six thousand-character strings the binary sketch size is about 8000/32000 bytes.
+
+	main features: #include <avr/pgmspace.h> 
+				   strcpy_P(destBuffer, (char*)pgm_read_word(&(progmem_string)));
+
+	is a literal string stored as PROGMEM or in SRAM?
 
 CODING
 	const int redLedPin = 2;  //use consts to manage pin #s as variables
@@ -87,3 +135,9 @@ CODING
 	delay(1000); // wait 1 second
 	* serial.begin(9600) makes pin 1 unusable by other stuff
 	variables are in scope inside of methods
+
+RESERVED PINS (updated 3/16)
+	from http://arduino.cc/en/Main/ArduinoBoardEthernet
+	pin 0 is used for receiving serial tty data
+	pin 1 is used for sending   serial tty data
+	pin 10-13 are reserved for interfacing with the Ethernet module
