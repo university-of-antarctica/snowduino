@@ -12,6 +12,10 @@ ADVANCED COMPONENTS
 		http://arduino.cc/en/Tutorial/RowColumnScanning
 		http://www.instructables.com/id/LED-Dot-Matrix-Display-1/
 
+		MAX7219 Red Dot Matrix Module
+			http://playground.arduino.cc/Main/LedControl
+			http://www.instructables.com/id/LED-Matrix-with-Arduino/
+
 	7-SEGMENT CHARACTER DISPLAY x2:
 		these look like an alarm clock 8 with a period, 10 legs
 

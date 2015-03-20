@@ -5,7 +5,7 @@
 <script>
 $(document).ready(function(){
     $("button").click(function(){
-        $.get("192.168.1.10/?CMD=1", function(data, status){
+        $.get("192.168.1.10/?myajax=1", function(data, status){
             alert("Data: " + data + "\nStatus: " + status);
         });
     });
