@@ -1,0 +1,5 @@
+Hooking up the MAX7219
+
+blue: CLK (pin 11)
+green: DIN (pin 12)
+orange: CS (pin 10)

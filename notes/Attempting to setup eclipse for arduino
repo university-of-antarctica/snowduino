@@ -1,0 +1,64 @@
+Attempting to setup eclipse for arduino
+
+downloaded eclipse luna
+installed the avr plugin
+  opened eclipse and went to help->install new software
+  pasted the link from the avr plugin website into the "Work with" box
+  selected the checkbox for the avr plugin and hit next a couple times
+
+>> sudo apt-get install avrdude binutils-avr gcc-avr avr-libc gdb-avr
+
+getting the core.a file
+
+  >> arduino
+  file->examples->basics->blink
+  compile (checkmark button)
+
+  cp /tmp/build[tab]/core.a .
+  mv core.a libArduinoUnoCore.a
+
+open eclipse
+new c++ project
+select avr cross compile application
+type in the name
+next
+MCU Type: ATmega328P
+MCU Frequency(Hz): 16000000
+
+Project->Properties->c/c++ build -> settings -> additional tools in toolchain
+   generate HEX file for flash memory (checked)
+  print size (checked)
+  AVRDude (checked) 
+
+Project->Properties->c/c++ build -> settings -> avr compiler -> directories
+  new path
+  wherever you put the libArduinoUnoCore.a earlier
+
+I may need to return to this, as it sounds like it should be .h files 
+
+directions concerning other options
+note typo on instructions says 
+  Select AVR Compiler -> Language Standard 
+instead of
+  Select AVR C++ Compiler -> Language Standard
+
+
+  "Select AVR C/C++ Linker
+If you're using C++ then the hex file can get really big. In the linker menu, change the command to avr-gcc and the command line pattern to the following:
+${COMMAND} --cref -s -Os ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} -lm ${FLAGS}
+Try without this change first."
+
+I will return to this if I run into problems
+
+
+
+      "Create symbol table
+      Optional. Shows all objects (functions, variables, etc) in the program, sorted by address. In Settings -> AVR C++ Linker, under "expert settings", append (do not replace - append!)
+      ; avr-nm -C -n ${OUTPUT} >${BuildArtifactFileBaseName}.symbol"
+
+      I will return to this if I don't have problems
+
+
+
+
+

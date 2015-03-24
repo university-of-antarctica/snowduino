@@ -141,3 +141,8 @@ RESERVED PINS (updated 3/16)
 	pin 0 is used for receiving serial tty data
 	pin 1 is used for sending   serial tty data
 	pin 10-13 are reserved for interfacing with the Ethernet module
+
+INSTALLING NEW LIBRARY
+  navigate to the usr/share/arduino/libraries folder and copy over the library
+  do this while Arduino IDE is closed
+  you may have to do this with sudo

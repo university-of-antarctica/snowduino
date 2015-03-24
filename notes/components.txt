@@ -15,6 +15,8 @@ ADVANCED COMPONENTS
 		MAX7219 Red Dot Matrix Module
 			http://playground.arduino.cc/Main/LedControl
 			http://www.instructables.com/id/LED-Matrix-with-Arduino/
+      // more explanation on daisy chaining
+      http://www.instructables.com/id/Arduino-LED-Matrix-Clock/?ALLSTEPS
 
 	7-SEGMENT CHARACTER DISPLAY x2:
 		these look like an alarm clock 8 with a period, 10 legs
