@@ -10,7 +10,7 @@ class Banner{
     int phraseLength;
     int nCols;
     int shAmt;
-    Character chars[64];
+    Character chars[10];
     Canvas* canvas;
     
     public:
@@ -63,11 +63,12 @@ class Banner{
       //Serial.println(shAmt);
       if(shAmt < -nCols){
         shAmt = 16;
-        flipChars();
-        flipOrder();
+//        flipChars();
+//        flipOrder();
       }
       if(shAmt > 16) shAmt=-nCols;
     }
+    
     void shiftLeft(int shAmt){
       shiftRight(-shAmt);
       
