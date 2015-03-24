@@ -33,11 +33,21 @@ class Character{
     void set(char c){
       char myByte;
       byte bytes[5];
-      for (int i = 0; i < 5; ++i){
-        myByte =  pgm_read_byte_near(font_5x7[c-32] + i);
-        bytes[i] = myByte;
+      
+      // Unprintable Characters
+      if(c < 32){
+        set(0,B00100100,0,B01000010,B00111100);
       }
-      set(bytes[0],bytes[1],bytes[2],bytes[3],bytes[4]);
+      
+      // Printable Characters
+      else{
+      
+        for (int i = 0; i < 5; ++i){
+          myByte =  pgm_read_byte_near(font_5x7[c-32] + i);
+          bytes[i] = myByte;
+        }
+        set(bytes[0],bytes[1],bytes[2],bytes[3],bytes[4]);
+      }
     }
     
     

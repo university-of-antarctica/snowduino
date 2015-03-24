@@ -71,5 +71,9 @@ class Canvas{
       lc_->setLed(actualDevice,deviceRow,deviceCol,state);
     }
     
+    int num_cols(){
+      return device_count_*8;
+    }
+    
 };
 #endif
