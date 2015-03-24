@@ -139,7 +139,22 @@ void beServer(){
 
 
 void respondToRequest(EthernetClient client, char* request){
-  
+                  
+                // Send a response
+                /*client.println("HTTP/1.1 200 OK");
+                client.println("Content-Type: text/html");
+                client.println("Connection: close");
+                //client.println("Refresh: 1");
+                client.println();
+                client.println("<!DOCTYPE html>");
+                client.println("<html>");
+                client.println("<head>");
+                client.println("<title>Arduino LED Control</title>");
+                client.println("</head>");
+                client.println("<body>");
+                client.println("<h1>HELLO</h1>");*/
+                
+                
                 char* firstLine = strtok(request,"\n");
                 strtok(firstLine," ");              // GET
                 char* params = strtok(0," /?");     // /?banner=hello&other=somethingelse
@@ -159,5 +174,4 @@ void writeArduinoOnMatrix() {
   
   banner.print();
   banner.shiftLeft(1);  
-  delay(100);
 }
