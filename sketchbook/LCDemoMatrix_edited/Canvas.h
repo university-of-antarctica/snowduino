@@ -27,10 +27,12 @@ class Canvas{
         lc->shutdown(1,false);
         
         /* Set the brightness to a low value */
-        lc->setIntensity(0,5);
-        lc->setIntensity(1,5);
+        lc->setIntensity(0,1);
+        lc->setIntensity(1,1);
     }
-    
+    void clearCol(int colNum){
+      mySetCol(colNum,B00000000);
+    }
     void mySetCol(int colNum, byte bits){
       if(colNum<0)return;
       int actualDevice = colNum/8; //integer division

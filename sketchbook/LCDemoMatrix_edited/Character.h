@@ -57,7 +57,12 @@ class Character{
      // Serial.print("start col: ");
       //Serial.println(startCol);//#include <avr/pgmspace.h>
       
+      for( int i = 0; i < 5; ++i){
+        //canvas->clearCol(startCol+i);
+        canvas->mySetCol(startCol+i,cols[i]);
+      }
       
+      /*
       canvas->mySetCol(startCol,cols[0]);
       //delay(thedelay);
       canvas->mySetCol(startCol+1,cols[1]);
@@ -66,7 +71,7 @@ class Character{
       //delay(thedelay);
       canvas->mySetCol(startCol+3,cols[3]);
       //delay(thedelay);
-      canvas->mySetCol(startCol+4,cols[4]);
+      canvas->mySetCol(startCol+4,cols[4]);*/
     }
     
     void flipVertical(){
