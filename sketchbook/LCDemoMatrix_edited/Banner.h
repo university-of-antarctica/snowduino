@@ -10,7 +10,7 @@ class Banner{
     int phraseLength;
     int nCols;
     int shAmt;
-    Character chars[10];
+    //Character chars[10];
     Canvas* canvas;
     
     public:
@@ -23,31 +23,30 @@ class Banner{
       this->nCols = (phraseLength+1)*6;
       this->canvas = canvas;
       
-      for(int i = 0; i < phraseLength; ++i){
+      /*for(int i = 0; i < phraseLength; ++i){
         chars[i] = Character(canvas,phrase[i]);
-      }
+      }*/
     }
     void print(){
-     // delay(100);
       int perCharacterScroll;
+      Character currentChar;
       for(int i = 0; i < phraseLength; ++i){
         perCharacterScroll = shAmt+i*6;
-       // canvas->clearCol(perCharacterScroll);
-        chars[i].printScrolledRightBy(perCharacterScroll);
+        currentChar = Character(canvas, phrase[i]);
+        currentChar.printScrolledRightBy(perCharacterScroll);
         canvas->clearCol(perCharacterScroll-1);
-       // delay(10);
-       // canvas->clearCol(perCharacterScroll+5);
+
       }
     }
     
-    void flipChars(){
+    /*void flipChars(){
       for(int i = 0; i < phraseLength; ++i){
         chars[i].flipVertical();
         chars[i].flipHorizontal();
       }
-    }
+    }*/
     
-    void flipOrder(){
+    /*void flipOrder(){
       int j = phraseLength;
       Character temp;
       for(int i = 0; i < phraseLength/2; ++i){
@@ -56,7 +55,7 @@ class Banner{
         chars[i]=chars[j];
         chars[j]=temp;
       }
-    }
+    }*/
     
     void shiftRight(int shiftBy){
       this->shAmt+=shiftBy;

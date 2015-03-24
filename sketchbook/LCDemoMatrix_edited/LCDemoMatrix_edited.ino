@@ -130,7 +130,7 @@ void beServer(){
 
 void respondToRequest(EthernetClient client, String & request){
   
-                /*
+                
                 client.println("HTTP/1.1 200 OK");
                 client.println("Content-Type: text/html");
                 client.println("Connection: close");
@@ -142,7 +142,7 @@ void respondToRequest(EthernetClient client, String & request){
                 client.println("<title>Arduino LED Control</title>");
                 client.println("</head>");
                 client.println("<body>");
-                client.println("<h1>HELLO</h1>");*/
+                client.println("<h1>HELLO</h1>");
                 
                 
                 String firstline = request.substring(0,request.indexOf('\n'));
