@@ -26,9 +26,9 @@ const int DIN_PIN = 7;
 const int CLK_PIN = 6;
 const int CS_PIN  = 5;
 const int NUM_DISPLAYS = 2;
-LedControl* lc=new LedControl(DIN_PIN,CLK_PIN,CS_PIN,NUM_DISPLAYS); 
+Canvas canvas = Canvas(DIN_PIN,CLK_PIN,CS_PIN,NUM_DISPLAYS);
 
-Canvas canvas = Canvas(lc);
+
 int counter = 0;
 Banner banner;
 char bannerBuffer[512] = "";
@@ -137,26 +137,14 @@ void beServer(){
     } // end if (client)
 }
 
-/*void indexOf(char* base, const char* pattern){
-  int ret = -1;
-  int iteration = 0;
-  int baseIndex = 0;
-  int patternIndex=0;
-  while(base[baseIndex]!='\0'){
-    while(base[baseIndex] == pattern[patternIndex]){
-    
-    }
-    ++baseIndex;
-  }
-}*/
 
 void respondToRequest(EthernetClient client, char* request){
   
                 char* firstLine = strtok(request,"\n");
-                strtok(firstLine," ");            // GET
+                strtok(firstLine," ");              // GET
                 char* params = strtok(0," /?");     // /?banner=hello&other=somethingelse
                // params+=2;                        //   banner=hello&other=somethingelse 
-                char* args = strtok(params,"=&"); //  banner,hello,other,somethingelse
+                char* args = strtok(params,"=&");   //   banner,hello,other,somethingelse
                 
                 Serial.println(args);
                 args = strtok(0,"=&"); // first thing after an =
@@ -171,5 +159,5 @@ void writeArduinoOnMatrix() {
   
   banner.print();
   banner.shiftLeft(1);  
-  //delay(delaytime);
+  delay(100);
 }

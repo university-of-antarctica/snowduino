@@ -10,7 +10,7 @@ class Banner{
     int phraseLength;
     int nCols;
     int shAmt;
-    //Character chars[10];
+    int clearance = 2;
     Canvas* canvas;
     
     // Returns the smallest nonnegative integer x, such that  a+x = yb, where a,b,y are integers
@@ -42,9 +42,9 @@ class Banner{
       int perCharacterScroll;
       Character currentChar;
       int indexOfFirstChar = -shAmt/6; //shamt = -10: 1 //shamt = -12: 2 //shamt = 10 : 
-      int indexOfLastChar = indexOfFirstChar+3;
+      int indexOfLastChar = indexOfFirstChar+4;
       
-      for(int i = indexOfFirstChar; i < indexOfLastChar && i < phraseLength; ++i){
+      for(int i = indexOfFirstChar; i < indexOfLastChar; ++i){
         perCharacterScroll = shAmt+i*6;
         currentChar = Character(canvas, at(i));
         currentChar.printScrolledRightBy(perCharacterScroll);
@@ -54,7 +54,13 @@ class Banner{
     }
     
     char at(int index){
-      return phrase[myMod(index,phraseLength)];
+      // Without the +clearance, the result of this mod would just convert increasing indices to rotating from 0,1,..,n-2,n-1,0,1,...
+      // With the +clearance, it now is 0,1,...,n-1,n,,...n+clearance-1,0,1,...
+      // This means we have a couple extra spots in the rotation, and we can make those return spaces instead of the actual characters in phrase
+      int bannerLengthWithAddedClearance = phraseLength+clearance;
+      int totalIndex = myMod(index,bannerLengthWithAddedClearance);
+      if(totalIndex>=phraseLength)return ' ';
+      return phrase[myMod(index,phraseLength+clearance)];
     }
     
     

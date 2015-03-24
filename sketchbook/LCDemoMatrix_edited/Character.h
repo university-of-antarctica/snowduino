@@ -59,7 +59,7 @@ class Character{
       
       for( int i = 0; i < 5; ++i){
         //canvas->clearCol(startCol+i);
-        canvas->mySetCol(startCol+i,cols[i]);
+        canvas->setCol(startCol+i,cols[i]);
       }
       
       /*
