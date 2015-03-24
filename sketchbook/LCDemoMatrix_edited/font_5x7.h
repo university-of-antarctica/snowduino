@@ -1,4 +1,7 @@
+#ifndef SNOWDUINO_FONT_5x7_H_
+#define SNOWDUINO_FONT_5x7_H_
 
+#include <avr/pgmspace.h>
 // defines 5x7 ascii characters 0x20-0x7F (32-127)
 unsigned const char PROGMEM font_5x7[96][5] = {
         {0x00,0x00,0x00,0x00,0x00}, //
@@ -98,3 +101,5 @@ unsigned const char PROGMEM font_5x7[96][5] = {
         {0x40,0x80,0xc0,0x40,0x80}, // ~
         {0x00,0x00,0x00,0x00,0x00}, //
 };
+
+#endif
