@@ -13,6 +13,17 @@ class Banner{
     //Character chars[10];
     Canvas* canvas;
     
+    // Returns the smallest nonnegative integer x, such that  a+x = yb, where a,b,y are integers
+    // Example: n % 5 from n = 6 -> -5 =  { 1, 0, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0 }
+    // But myMod(n,5) from n = 6 -> -5 =  { 1, 0, 4, 3, 2, 1, 0, 4, 3, 2, 1, 0 }
+    int myMod(int a, int b){
+      if(b<0)b=-b; //b = abs(b)
+      while(a < 0 ){
+        a+=b;
+      }
+      return a%b;
+    }
+    
     public:
     Banner(){
     }
@@ -30,14 +41,22 @@ class Banner{
     void print(){
       int perCharacterScroll;
       Character currentChar;
-      for(int i = 0; i < phraseLength; ++i){
+      int indexOfFirstChar = -shAmt/6; //shamt = -10: 1 //shamt = -12: 2 //shamt = 10 : 
+      int indexOfLastChar = indexOfFirstChar+3;
+      
+      for(int i = indexOfFirstChar; i < indexOfLastChar && i < phraseLength; ++i){
         perCharacterScroll = shAmt+i*6;
-        currentChar = Character(canvas, phrase[i]);
+        currentChar = Character(canvas, at(i));
         currentChar.printScrolledRightBy(perCharacterScroll);
         canvas->clearCol(perCharacterScroll-1);
 
       }
     }
+    
+    char at(int index){
+      return phrase[myMod(index,phraseLength)];
+    }
+    
     
     /*void flipChars(){
       for(int i = 0; i < phraseLength; ++i){
@@ -60,12 +79,12 @@ class Banner{
     void shiftRight(int shiftBy){
       this->shAmt+=shiftBy;
       //Serial.println(shAmt);
-      if(shAmt < -nCols){
-        shAmt = 16;
+      /*if(shAmt < -nCols){
+        shAmt = 32;
 //        flipChars();
 //        flipOrder();
       }
-      if(shAmt > 16) shAmt=-nCols;
+      if(shAmt > nCols) shAmt = -32;*/
     }
     
     void shiftLeft(int shAmt){
