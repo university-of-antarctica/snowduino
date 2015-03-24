@@ -1,0 +1,370 @@
+//We always have to include the library
+#include "LedControlMS.h"
+
+#include <avr/pgmspace.h>
+
+
+
+
+// defines 5x7 ascii characters 0x20-0x7F (32-127)
+unsigned const char PROGMEM font_5x7[96][5] = {
+        {0x00,0x00,0x00,0x00,0x00}, //
+        {0x00,0x00,0xfa,0x00,0x00}, // !
+        {0x00,0xe0,0x00,0xe0,0x00}, // "
+        {0x28,0xfe,0x28,0xfe,0x28}, // #
+        {0x24,0x54,0xfe,0x54,0x48}, // $
+        {0xc4,0xc8,0x10,0x26,0x46}, // %
+        {0x6c,0x92,0xaa,0x44,0x0a}, // &
+        {0x00,0xa0,0xc0,0x00,0x00}, // '
+        {0x00,0x38,0x44,0x82,0x00}, // (
+        {0x00,0x82,0x44,0x38,0x00}, // )
+        {0x10,0x54,0x38,0x54,0x10}, // *
+        {0x10,0x10,0x7c,0x10,0x10}, // +
+        {0x00,0x0a,0x0c,0x00,0x00}, // ,
+        {0x10,0x10,0x10,0x10,0x10}, // -
+        {0x00,0x06,0x06,0x00,0x00}, // .
+        {0x04,0x08,0x10,0x20,0x40}, // /
+        {0x7c,0x8a,0x92,0xa2,0x7c}, // 0
+        {0x00,0x42,0xfe,0x02,0x00}, // 1
+        {0x42,0x86,0x8a,0x92,0x62}, // 2
+        {0x84,0x82,0xa2,0xd2,0x8c}, // 3
+        {0x18,0x28,0x48,0xfe,0x08}, // 4
+        {0xe4,0xa2,0xa2,0xa2,0x9c}, // 5
+        {0x3c,0x52,0x92,0x92,0x0c}, // 6
+        {0x80,0x8e,0x90,0xa0,0xc0}, // 7
+        {0x6c,0x92,0x92,0x92,0x6c}, // 8
+        {0x60,0x92,0x92,0x94,0x78}, // 9
+        {0x00,0x6c,0x6c,0x00,0x00}, // :
+        {0x00,0x6a,0x6c,0x00,0x00}, // ;
+        {0x00,0x10,0x28,0x44,0x82}, // <
+        {0x28,0x28,0x28,0x28,0x28}, // =
+        {0x82,0x44,0x28,0x10,0x00}, // >
+        {0x40,0x80,0x8a,0x90,0x60}, // ?
+        {0x4c,0x92,0x9e,0x82,0x7c}, // @
+        {0x7e,0x88,0x88,0x88,0x7e}, // A
+        {0xfe,0x92,0x92,0x92,0x6c}, // B
+        {0x7c,0x82,0x82,0x82,0x44}, // C
+        {0xfe,0x82,0x82,0x44,0x38}, // D
+        {0xfe,0x92,0x92,0x92,0x82}, // E
+        {0xfe,0x90,0x90,0x80,0x80}, // F
+        {0x7c,0x82,0x82,0x8a,0x4c}, // G
+        {0xfe,0x10,0x10,0x10,0xfe}, // H
+        {0x00,0x82,0xfe,0x82,0x00}, // I
+        {0x04,0x02,0x82,0xfc,0x80}, // J
+        {0xfe,0x10,0x28,0x44,0x82}, // K
+        {0xfe,0x02,0x02,0x02,0x02}, // L
+        {0xfe,0x40,0x20,0x40,0xfe}, // M
+        {0xfe,0x20,0x10,0x08,0xfe}, // N
+        {0x7c,0x82,0x82,0x82,0x7c}, // O
+        {0xfe,0x90,0x90,0x90,0x60}, // P
+        {0x7c,0x82,0x8a,0x84,0x7a}, // Q
+        {0xfe,0x90,0x98,0x94,0x62}, // R
+        {0x62,0x92,0x92,0x92,0x8c}, // S
+        {0x80,0x80,0xfe,0x80,0x80}, // T
+        {0xfc,0x02,0x02,0x02,0xfc}, // U
+        {0xf8,0x04,0x02,0x04,0xf8}, // V
+        {0xfe,0x04,0x18,0x04,0xfe}, // W
+        {0xc6,0x28,0x10,0x28,0xc6}, // X
+        {0xc0,0x20,0x1e,0x20,0xc0}, // Y
+        {0x86,0x8a,0x92,0xa2,0xc2}, // Z
+        {0x00,0x00,0xfe,0x82,0x82}, // [
+        {0x40,0x20,0x10,0x08,0x04}, // "\"
+        {0x82,0x82,0xfe,0x00,0x00}, // ]
+        {0x20,0x40,0x80,0x40,0x20}, // ^
+        {0x02,0x02,0x02,0x02,0x02}, // _
+        {0x00,0x80,0x40,0x20,0x00}, // `
+        {0x04,0x2a,0x2a,0x2a,0x1e}, // a
+        {0xfe,0x12,0x22,0x22,0x1c}, // b
+        {0x1c,0x22,0x22,0x22,0x04}, // c
+        {0x1c,0x22,0x22,0x12,0xfe}, // d
+        {0x1c,0x2a,0x2a,0x2a,0x18}, // e
+        {0x10,0x7e,0x90,0x80,0x40}, // f
+        {0x10,0x28,0x2a,0x2a,0x3c}, // g
+        {0xfe,0x10,0x20,0x20,0x1e}, // h
+        {0x00,0x22,0xbe,0x02,0x00}, // i
+        {0x04,0x02,0x22,0xbc,0x00}, // j
+        {0x00,0xfe,0x08,0x14,0x22}, // k
+        {0x00,0x82,0xfe,0x02,0x00}, // l
+        {0x3e,0x20,0x18,0x20,0x1e}, // m
+        {0x3e,0x10,0x20,0x20,0x1e}, // n
+        {0x1c,0x22,0x22,0x22,0x1c}, // o
+        {0x3e,0x28,0x28,0x28,0x10}, // p
+        {0x10,0x28,0x28,0x18,0x3e}, // q
+        {0x3e,0x10,0x20,0x20,0x10}, // r
+        {0x12,0x2a,0x2a,0x2a,0x04}, // s
+        {0x20,0xfc,0x22,0x02,0x04}, // t
+        {0x3c,0x02,0x02,0x04,0x3e}, // u
+        {0x38,0x04,0x02,0x04,0x38}, // v
+        {0x3c,0x02,0x0c,0x02,0x3c}, // w
+        {0x22,0x14,0x08,0x14,0x22}, // x
+        {0x30,0x0a,0x0a,0x0a,0x3c}, // y
+        {0x22,0x26,0x2a,0x32,0x22}, // z
+        {0x00,0x10,0x6c,0x82,0x00}, // {
+        {0x00,0x00,0xfe,0x00,0x00}, // |
+        {0x00,0x82,0x6c,0x10,0x00}, // }
+        {0x40,0x80,0xc0,0x40,0x80}, // ~
+        {0x00,0x00,0x00,0x00,0x00}, //
+};
+
+/*
+ Now we need a LedControl to work with.
+ ***** These pin numbers will probably not work with your hardware *****
+ pin 12 is connected to the DataIn 
+ pin 11 is connected to the CLK 
+ pin 10 is connected to LOAD 
+ We have two MAX72XXs. 
+ */
+LedControl lc=LedControl(12,11,10,2); // LAST ARGUMENT IS NUMBER OF LED ARRAYS - STEVEN
+
+/* we always wait a bit between updates of the display */
+unsigned long delaytime=20;
+
+
+// Character class holds 5x7 characters
+class Character{
+  byte cols[5];
+  public:
+  Character(){}
+  Character(byte r1, byte r2, byte r3, byte r4, byte r5){
+    set(r1,r2,r3,r4,r5);
+  }
+  
+  Character(char letter){
+    set(letter);
+    flipVertical();
+  }
+  
+  void set(char c){
+    char myByte;
+    byte bytes[5];
+    for (int i = 0; i < 5; ++i){
+      myByte =  pgm_read_byte_near(font_5x7[c-32] + i);
+      bytes[i] = myByte;
+    }
+    set(bytes[0],bytes[1],bytes[2],bytes[3],bytes[4]);
+  }
+  
+  
+  void set(byte r1, byte r2, byte r3, byte r4, byte r5){
+    cols[0]=r1;
+    cols[1]=r2;
+    cols[2]=r3;
+    cols[3]=r4;
+    cols[4]=r5;
+  }
+  
+  void printScrolledRightBy(int scrollAmt){
+    int startCol = scrollAmt;
+    //if(scrollAmt < -4 || scrollAmt > 15) return;  // Don't waste time 
+    //int thedelay = 0;
+    //delay(thedelay);
+    mySetCol(startCol,cols[0]);
+    //delay(thedelay);
+    mySetCol(startCol+1,cols[1]);
+    //delay(thedelay);
+    mySetCol(startCol+2,cols[2]);
+    //delay(thedelay);
+    mySetCol(startCol+3,cols[3]);
+    //delay(thedelay);
+    mySetCol(startCol+4,cols[4]);
+  }
+  
+  void flipVertical(){
+    for(int i = 0; i < 5; ++i){
+      cols[i] = reverse(cols[i]); 
+    }
+  }
+  
+  void flipHorizontal(){
+    byte temp;
+    int j;
+    for(int i = 0; i < 5/2; ++i){
+      j = 5-1-i;  // Other end of the array 
+      temp = cols[i];
+      cols[i] = cols[j];
+      cols[j] = temp;
+    }
+  }  
+  
+  
+};
+
+
+
+
+
+class Banner{
+  private:
+    String phrase;
+    int phraseLength;
+    int nCols;
+    int shAmt;
+    Character chars[128];
+    
+    public:
+    Banner(){
+    }
+    Banner(String phrase){
+      this->phrase = phrase;
+      this->shAmt = 0;
+      this->phraseLength = phrase.length();
+      this->nCols = (phraseLength+1)*6;
+      
+      for(int i = 0; i < phraseLength; ++i){
+        chars[i] = Character(phrase[i]);
+      }
+    }
+    void print(){
+      int perCharacterScroll;
+      for(int i = 0; i < phraseLength; ++i){
+        perCharacterScroll = shAmt+i*6;
+        chars[i].printScrolledRightBy(perCharacterScroll);
+      }
+    }
+    
+    void flipChars(){
+      for(int i = 0; i < phraseLength; ++i){
+        chars[i].flipVertical();
+        chars[i].flipHorizontal();
+      }
+    }
+    
+    void flipOrder(){
+      int j = phraseLength;
+      Character temp;
+      for(int i = 0; i < phraseLength/2; ++i){
+        j = phraseLength-1-i;
+        temp = chars[i];
+        chars[i]=chars[j];
+        chars[j]=temp;
+      }
+    }
+    
+    void shiftRight(int shiftBy){
+      this->shAmt+=shiftBy;
+      //Serial.println(shAmt);
+      if(shAmt < -nCols){
+        shAmt = 16;
+        flipChars();
+        flipOrder();
+      }
+      if(shAmt > 16) shAmt=-nCols;
+    }
+    void shiftLeft(int shAmt){
+      shiftRight(-shAmt);
+      
+    }
+    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+int spacing = 0;
+Banner banner;
+
+
+byte reverse(byte b) {
+   b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+   b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+   b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+   return b;
+}
+
+// Returns the smallest nonnegative integer x, such that  a+x = yb, where a,b,y are integers
+// Example: n % 5 from n = 6 -> -5 =  { 1, 0, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0 }
+// But myMod(n,5) from n = 6 -> -5 =  { 1, 0, 4, 3, 2, 1, 0, 4, 3, 2, 1, 0 }
+int myMod(int a, int b){
+  if(b<0)b=-b; //b = abs(b)
+  while(a < 0 ){
+    a+=b;
+  }
+  return a%b;
+}
+
+
+void writeArduinoOnMatrix() {
+/*
+  lc.setRow(0,0,0xFF);
+  lc.setRow(1,1,0xF);*/
+  lc.clearDisplay(0);
+  lc.clearDisplay(1);
+  /*
+  Character A = Character('A');
+  Character r = Character('r');
+  Character d = Character('d');
+  Character u = Character('u');
+  Character i = Character('i');
+  Character n = Character('n');
+  Character o = Character('o');
+  
+  A.printScrolledRightBy(spacing);
+  r.printScrolledRightBy(spacing+6);
+  d.printScrolledRightBy(spacing+12);
+  u.printScrolledRightBy(spacing+18);
+  i.printScrolledRightBy(spacing+24);
+  n.printScrolledRightBy(spacing+30);
+  o.printScrolledRightBy(spacing+36);
+  */
+  banner.print();
+  banner.shiftLeft(1);
+  
+  //delay(delaytime);
+  spacing--;
+  
+}
+
+void mySetCol(int colNum, byte bits){
+  if(colNum<0)return;
+  int actualDevice = colNum/8; //integer division
+  //Serial.print("actualDevice ");
+  //Serial.println(actualDevice);
+  //if(actualDevice<0 || actualDevice >1) return;  // Don't waste time doing nothing
+  int actualRow = myMod(colNum,8);
+  //Serial.print("actual Row ");
+  //Serial.println(actualRow);
+  lc.setRow(actualDevice,actualRow,bits);
+}
+
+
+void setup() {
+  
+  Serial.begin(9600);
+  
+  /*
+   The MAX72XX is in power-saving mode on startup,
+   we have to do a wakeup call
+   */
+  lc.shutdown(0,false);
+  lc.shutdown(1,false);
+  
+  /* Set the brightness to a low value */
+  lc.setIntensity(0,5);
+  lc.setIntensity(1,5);
+  
+  /* Set the max # of rows of the 0th display to all 8 */
+//  lc.setScanLimit(0,8);
+  /* Set the max # of rows of the 1st display to all 8 */
+//  lc.setScanLimit(1,8);
+  
+  Serial.println("Serial starting...");
+  Serial.println(lc.getDeviceCount());
+  
+  banner = Banner("Yo, one time, I sucked six in a row!");
+  /* and clear the display */
+  //lc.clearDisplay(0);
+}
+void loop() { 
+  writeArduinoOnMatrix();
+  //rows();
+  //columns();
+  //single();
+}
