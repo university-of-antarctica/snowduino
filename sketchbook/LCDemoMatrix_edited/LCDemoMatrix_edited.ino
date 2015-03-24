@@ -6,6 +6,7 @@
 #include <Ethernet.h>
 #define SS_SD_CARD   4
 #define SS_ETHERNET 10
+
 //String HTTP_req;//     // stores the HTTP request
 // MAC address from Ethernet shield sticker under board
 byte mac[] = { 0x00, 0x1D, 0xFE, 0xEA, 0x39, 0x17 };
@@ -17,10 +18,10 @@ EthernetServer server(80);  // create a server at port 80
 /*
  Now we need a LedControl to work with.
  ***** These pin numbers will probably not work with your hardware *****
- pin 12 is connected to the DataIn 
- pin 11 is connected to the CLK 
- pin 10 is connected to LOAD 
- 2 is the nu
+ pin 7 is connected to the DataIn 
+ pin 6 is connected to the CLK 
+ pin 5 is connected to Load. 
+ 2 is the # of dispays
  */
 const int DIN_PIN = 7;
 const int CLK_PIN = 6;
