@@ -6,7 +6,7 @@
 
 class Banner{
   private:
-    String phrase;
+    const char* phrase;
     int phraseLength;
     int nCols;
     int shAmt;
@@ -16,10 +16,10 @@ class Banner{
     public:
     Banner(){
     }
-    Banner(Canvas* canvas, String phrase){
+    Banner(Canvas* canvas, const char* phrase, int length){
       this->phrase = phrase;
       this->shAmt = 0;
-      this->phraseLength = phrase.length();
+      this->phraseLength = length;
       this->nCols = (phraseLength+1)*6;
       this->canvas = canvas;
       

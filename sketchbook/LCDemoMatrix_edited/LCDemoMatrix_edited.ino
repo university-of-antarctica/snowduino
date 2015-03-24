@@ -6,7 +6,7 @@
 #include <Ethernet.h>
 #define SS_SD_CARD   4
 #define SS_ETHERNET 10
-String HTTP_req;//     // stores the HTTP request
+//String HTTP_req;//     // stores the HTTP request
 // MAC address from Ethernet shield sticker under board
 byte mac[] = { 0x00, 0x1D, 0xFE, 0xEA, 0x39, 0x17 };
 IPAddress ip=(192, 168, 1, 19); // IP address, may need to change depending on network
@@ -26,12 +26,16 @@ const int DIN_PIN = 7;
 const int CLK_PIN = 6;
 const int CS_PIN  = 5;
 const int NUM_DISPLAYS = 2;
- 
- 
 LedControl* lc=new LedControl(DIN_PIN,CLK_PIN,CS_PIN,NUM_DISPLAYS); 
+
 Canvas canvas = Canvas(lc);
 int counter = 0;
 Banner banner;
+char bannerBuffer[512] = "";
+char requestBuffer[512] = "";
+int requestLength = 0;
+
+
 
 void ethernet_setup(){
   pinMode(SS_SD_CARD, OUTPUT);
@@ -70,7 +74,7 @@ void setup() {
   Serial.println(freeMemory());
   ethernet_setup();
   
-  banner = Banner(&canvas,"hello");
+  banner = Banner(&canvas,"hello",6);
 }
 void loop() { 
   // Periodically print out the remaining free memory
@@ -87,29 +91,36 @@ void loop() {
 
 
 void beServer(){
-  HTTP_req="";
+  bool keepRecording;
     EthernetClient client = server.available();  // try to get client
     if (client) {  // got client?
+      requestLength=0;
+      keepRecording=true;
         Serial.println("connected to client");
         boolean currentLineIsBlank = true;
         while (client.connected()) {
             if (client.available()) {   // client data available to read
                 char c = client.read(); // read 1 byte (character) from client
-                HTTP_req+= c;  // save the HTTP request 1 char at a time
+                if(keepRecording)requestBuffer[requestLength] = c;  // save the HTTP request 1 char at a time
+                ++requestLength;
                
                 // last line of client request is blank and ends with \n
                 // respond to client only after last line received
                 if (c == '\n' && currentLineIsBlank) {
-                    Serial.println("received request:\n:BEGIN:\n"+HTTP_req+":END:");
-                    respondToRequest(client,HTTP_req);
-                    //sprintf(outBuf,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n<html><h1><HELLO></h1></html>");
-                    //client.write(outBuf);
+                    requestBuffer[requestLength]='\0';
+                    Serial.print("received request of length ");
+                    Serial.print(requestLength);
+                    Serial.print(":\n:BEGIN:\n");
+                    Serial.print(requestBuffer);
+                    Serial.println(":END:");
+                    respondToRequest(client,requestBuffer);
                     break;
                 }
                 // every line of text received from the client ends with \r\n
                 if (c == '\n') {
                     // last character on line of received text
                     // starting new line with next character read
+                    keepRecording = false;
                     currentLineIsBlank = true;
                 } 
                 else if (c != '\r') {
@@ -126,47 +137,32 @@ void beServer(){
     } // end if (client)
 }
 
+/*void indexOf(char* base, const char* pattern){
+  int ret = -1;
+  int iteration = 0;
+  int baseIndex = 0;
+  int patternIndex=0;
+  while(base[baseIndex]!='\0'){
+    while(base[baseIndex] == pattern[patternIndex]){
+    
+    }
+    ++baseIndex;
+  }
+}*/
 
-
-void respondToRequest(EthernetClient client, String & request){
+void respondToRequest(EthernetClient client, char* request){
   
+                char* firstLine = strtok(request,"\n");
+                strtok(firstLine," ");            // GET
+                char* params = strtok(0," /?");     // /?banner=hello&other=somethingelse
+               // params+=2;                        //   banner=hello&other=somethingelse 
+                char* args = strtok(params,"=&"); //  banner,hello,other,somethingelse
                 
-                client.println("HTTP/1.1 200 OK");
-                client.println("Content-Type: text/html");
-                client.println("Connection: close");
-                //client.println("Refresh: 1");
-                client.println();
-                client.println("<!DOCTYPE html>");
-                client.println("<html>");
-                client.println("<head>");
-                client.println("<title>Arduino LED Control</title>");
-                client.println("</head>");
-                client.println("<body>");
-                client.println("<h1>HELLO</h1>");
+                Serial.println(args);
+                args = strtok(0,"=&"); // first thing after an =
+                Serial.println(args);
                 
-                
-                String firstline = request.substring(0,request.indexOf('\n'));
-                Serial.print("first line: ");
-                Serial.println(firstline);
-                
-                if(firstline.indexOf("favicon.ico")>-1){
-                  Serial.println("favicon requested");
-                  Serial.println(firstline.indexOf("favicon.ico"));
-                  return;
-                }
-                
-                
-                String banner_stmt = firstline.substring(firstline.indexOf("banner="));
-                String banner_val = banner_stmt.substring(7,banner_stmt.indexOf(' '));
-                Serial.print("your banner msg: ");
-                Serial.println(banner_val);
-                banner = Banner(&canvas,banner_val.c_str());
-                
-                
-                
-  
-  
-  
+                banner = Banner(&canvas,args,strlen(args));
 }
 
 
