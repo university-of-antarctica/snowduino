@@ -1,18 +1,13 @@
 #include "LedControlMS.h"
 #include <MemoryFree.h>
 #include "Banner.h"
-
+#include "NetworkSetup.h"
 #include <SPI.h>
 #include <Ethernet.h>
 #define SS_SD_CARD   4
 #define SS_ETHERNET 10
 
-//String HTTP_req;//     // stores the HTTP request
 // MAC address from Ethernet shield sticker under board
-byte mac[] = { 0x00, 0x1D, 0xFE, 0xEA, 0x39, 0x17 };
-IPAddress ip=(192, 168, 1, 19); // IP address, may need to change depending on network
-EthernetServer server(80);  // create a server at port 80
-
 
 
 /*
@@ -28,7 +23,7 @@ const int CLK_PIN = 6;
 const int CS_PIN  = 5;
 const int NUM_DISPLAYS = 2;
 Canvas canvas = Canvas(DIN_PIN,CLK_PIN,CS_PIN,NUM_DISPLAYS);
-
+EthernetServer server(80);
 
 int counter = 0;
 Banner banner;
@@ -37,43 +32,17 @@ char requestBuffer[512] = "";
 int requestLength = 0;
 
 
-
-void ethernet_setup(){
-  pinMode(SS_SD_CARD, OUTPUT);
-  pinMode(SS_ETHERNET, OUTPUT);
-  digitalWrite(SS_SD_CARD, HIGH); // disable SD card
-  digitalWrite(SS_ETHERNET, LOW); // enable ethernet
-  Serial.println("disabled sd card, enabled ethernet");
-  
-    // start the Ethernet connection:
-  Serial.println("Trying to get an IP address using DHCP");
-  if (Ethernet.begin(mac) == 0) {
-    Serial.write("Failed to configure Ethernet using DHCP");
-    // initialize the ethernet device not using DHCP:
-    Ethernet.begin(mac, ip);
-  }
-  // print your local IP address:
-  Serial.print("My IP address: ");
-  ip = Ethernet.localIP();
-  for (byte thisByte = 0; thisByte < 4; thisByte++) {
-    // print the value of each byte of the IP address:
-    Serial.print(ip[thisByte], DEC);
-    Serial.print("."); 
-  } 
-  Serial.println("");
-  
-  
-    server.begin();           // start to listen for clients
-    Serial.println("listening...");
-}
-
-
 void setup() {
   Serial.begin(9600);
   Serial.println("Serial starting...");
   Serial.print("free memory: ");
   Serial.println(freeMemory());
-  ethernet_setup();
+  
+  
+  NetworkSetup ns = NetworkSetup();
+  ns.Setup();
+  server.begin();           // start to listen for clients
+  Serial.println("listening...");
   
   banner = Banner(&canvas,"hello",6);
 }
