@@ -4,7 +4,6 @@
 #include <Ethernet.h>
 #include "BannerCommand.h"
 
-
 class Request{
   private:
     EthernetClient client_;
@@ -45,11 +44,20 @@ class Request{
     }
     
     
+    Command* parseArgPair(char* param_name, char* param_value){
+      if(strcmp(param_name,"banner") == 0){
+        Serial.print("parseArgPair: ");
+        Serial.println(param_value);
+        return new BannerCommand(param_value);
+      }
+      else{
+        return new NoCommand();
+      }
+    }
     
-    
-    BannerCommand respond(){
+    Command* respond(){
       char* firstLine = strtok(request_buffer_,"\n"); // GET /?banner=hello&other=somethingelse HTTP/1.1
-      if(strstr(firstLine,"GET /favicon.ico HTTP/1.1"))return null;
+      if(strstr(firstLine,"GET /favicon.ico HTTP/1.1"))return new NoCommand();
       
       strtok(firstLine,"/ ?");                // GET
       char* params = strtok(0,"/ ?");         //       banner=hello&other=somethingelse
@@ -59,36 +67,11 @@ class Request{
       char* param_value;
       
       while( token != '\0' ){
-           param_name = token;
-           param_value = strtok(0,"& \n");
-           removePercentTwenties(param_value);
-           
-           if(strcmp(param_name,"banner") == 0){
-              Serial.print("banner command activated!: ");
-              Serial.println(param_value);
-              return BannerCommand(param_value);
-              /*banner = Banner(&canvas,param_value,strlen(param_value));
-              client.println("HTTP/1.1 200 OK");
-              client.println("Content-Type: text/plain");
-              client.println("Connection: close");
-              client.println();
-              client.println("Snowduino is now saying the following: ");
-              client.println(param_value);*/
-           }
-           else{
-              Serial.print(param_name);
-              Serial.print(" (unknown command) : ");
-              Serial.println(param_value); 
-              client.println("HTTP/1.1 200 OK");
-              client.println("Content-Type: text/plain");
-              client.println("Connection: close");
-              client.println();
-              client.println("commands: ");
-              client.println(param_name);
-              client.println(param_value);
-           }
-           
-          token = strtok(0,"= \n");
+         param_name = token;
+         param_value = strtok(0,"& \n");
+         removePercentTwenties(param_value);
+         return parseArgPair(param_name,param_value);
+         token = strtok(0,"= \n");
       }      
     }
   
