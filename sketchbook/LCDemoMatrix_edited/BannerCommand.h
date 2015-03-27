@@ -1,22 +1,22 @@
 #ifndef SNOWDUINO_BANNER_COMMAND_H_
 #define SNOWDUINO_BANNER_COMMAND_H_
 #include "Banner.h"
-
+/*
 class Command{
   public:
   virtual void sendTo(Banner* b);
-  static const char description;
+  char description;
 };
 
 class NoCommand : public Command{
   public:
   void sendTo(Banner* b){
   }
-  static const char description = 'n';
+  char description = 'n';
 };
 
-
-class BannerCommand : public Command{
+*/
+class BannerCommand{
   private:
   char* param_value_;
   bool do_nothing_;
@@ -34,7 +34,6 @@ class BannerCommand : public Command{
   char* param_value(){
     return param_value_;
   }
-  static const char description = 'b';
   
 };
 

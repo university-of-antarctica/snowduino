@@ -25,6 +25,9 @@ class Request{
       char* percent_loc;
       char* after_percent;
       int after_percent_index;
+      
+      char code_buffer[3];
+      
       // iterate over entire string searching for % codes to eliminate
       for(int i = 0; i < len; ++i){
         c = *(httpString+i);
@@ -32,7 +35,11 @@ class Request{
           percent_loc = httpString+i;
           after_percent = httpString+i+1;
           after_percent_index = i+1;
-          code = strtol(after_percent,0, 16);
+          
+          memcpy(code_buffer,after_percent,2);
+          code_buffer[2]='\0';
+          
+          code = strtol(code_buffer,0, 16);
           // replace the percent with the character that the code represents
           *(percent_loc)=code;
           // shift the remainder of the string to the left by 2 after the percent
@@ -44,20 +51,20 @@ class Request{
     }
     
     
-    Command* parseArgPair(char* param_name, char* param_value){
+    BannerCommand* parseArgPair(char* param_name, char* param_value){
       if(strcmp(param_name,"banner") == 0){
         Serial.print("parseArgPair: ");
         Serial.println(param_value);
         return new BannerCommand(param_value);
       }
       else{
-        return new NoCommand();
+        return new BannerCommand();
       }
     }
     
-    Command* respond(){
+    BannerCommand* respond(){
       char* firstLine = strtok(request_buffer_,"\n"); // GET /?banner=hello&other=somethingelse HTTP/1.1
-      if(strstr(firstLine,"GET /favicon.ico HTTP/1.1"))return new NoCommand();
+      if(strstr(firstLine,"GET /favicon.ico HTTP/1.1"))return new BannerCommand();
       
       strtok(firstLine,"/ ?");                // GET
       char* params = strtok(0,"/ ?");         //       banner=hello&other=somethingelse

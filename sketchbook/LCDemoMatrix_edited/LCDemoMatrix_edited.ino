@@ -62,7 +62,7 @@ void loop() {
   
 }
 
-void processBannerCommand(Command* cmd ){
+void processBannerCommand(BannerCommand* cmd ){
   client_.println("HTTP/1.1 200 OK");
   client_.println("Content-Type: text/plain");
   client_.println("Connection: close");
@@ -71,8 +71,9 @@ void processBannerCommand(Command* cmd ){
   //client_.println(cmd->param_value());
   //banner.setPhrase(cmd.param_value());
   cmd->sendTo(&banner);
-  Serial.print("command description: ");
-  Serial.println(cmd->description);
+  client_.println("<p>hello</p>");
+  //Serial.print("command description: ");
+  //Serial.println(cmd->description);
   delete cmd;
 }
 
@@ -103,8 +104,11 @@ void beServer(){
                     Serial.print(":\n:BEGIN:\n");
                     Serial.print(requestBuffer);
                     Serial.println(":END:");
+                    
+                    //strcpy(requestBuffer,bannerBuffer);
+                    
                     Request r = Request(client,requestBuffer);
-                    Command* cmd = r.respond();
+                    BannerCommand* cmd = r.respond();
                     processBannerCommand(cmd);
                     break;
                 }
