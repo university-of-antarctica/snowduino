@@ -4,6 +4,8 @@
 #include "NetworkSetup.h"
 #include <SPI.h>
 #include <Ethernet.h>
+#include "Request.h"
+#include "BannerCommand.h"
 #define SS_SD_CARD   4
 #define SS_ETHERNET 10
 
@@ -23,7 +25,7 @@ const int CLK_PIN = 6;
 const int CS_PIN  = 5;
 const int NUM_DISPLAYS = 2;
 Canvas canvas = Canvas(DIN_PIN,CLK_PIN,CS_PIN,NUM_DISPLAYS);
-EthernetServer server(80);
+EthernetServer server(8282);
 
 int counter = 0;
 Banner banner;
@@ -61,6 +63,21 @@ void loop() {
 
 
 void beServer(){
+  
+  //parsing the request one character at a time... how to proceed?
+  // allocate a large block (512 bytes)
+  // a short request is around 300 bytes
+  // the get parameters are on the first line
+  // read the first line until we get to the ? after the url path
+  // read until the space between the get parameters and "HTTP/1.1"
+  // we want to convert %20 to ' ' 
+  
+  
+  
+  
+  
+  
+  
   bool keepRecording;
     EthernetClient client = server.available();  // try to get client
     if (client) {  // got client?
@@ -71,8 +88,10 @@ void beServer(){
         while (client.connected()) {
             if (client.available()) {   // client data available to read
                 char c = client.read(); // read 1 byte (character) from client
-                if(keepRecording)requestBuffer[requestLength] = c;  // save the HTTP request 1 char at a time
-                ++requestLength;
+                if(keepRecording){
+                  requestBuffer[requestLength] = c;  // save the HTTP request 1 char at a time
+                  ++requestLength;
+                }
                
                 // last line of client request is blank and ends with \n
                 // respond to client only after last line received
@@ -83,7 +102,10 @@ void beServer(){
                     Serial.print(":\n:BEGIN:\n");
                     Serial.print(requestBuffer);
                     Serial.println(":END:");
-                    respondToRequest(client,requestBuffer);
+                    Request r = Request(client,requestBuffer);
+                    BannerCommand cmd = r.respond();
+                    cmd.sendTo(&banner);
+                    //respondToRequest(client,requestBuffer);
                     break;
                 }
                 // every line of text received from the client ends with \r\n
@@ -108,34 +130,98 @@ void beServer(){
 }
 
 
+// Iterate over a string and remove the % url-encodings
+void removePercentTwenties(char* httpString){
+  int len = strlen(httpString);
+  char c;
+  int code;
+  char* percent_loc;
+  char* after_percent;
+  int after_percent_index;
+  // iterate over entire string searching for % codes to eliminate
+  for(int i = 0; i < len; ++i){
+    c = *(httpString+i);
+    if(c=='%'){  
+      percent_loc = httpString+i;
+      after_percent = httpString+i+1;
+      after_percent_index = i+1;
+      code = strtol(after_percent,0, 16);
+      // replace the percent with the character that the code represents
+      *(percent_loc)=code;
+      // shift the remainder of the string to the left by 2 after the percent
+      for(int j = after_percent_index; j < len; j++){
+        *(httpString+j) = *(httpString+j+2); 
+      }
+    } 
+  }  
+}
+
+
+/*
+void parseBannerCmd(char* param_value){
+  Serial.print("banner command activated!: ");
+  Serial.println(param_value);
+  banner = Banner(&canvas,param_value,strlen(param_value));
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: text/plain");
+  client.println("Connection: close");
+  client.println();
+  client.println("Snowduino is now saying the following: ");
+  client.println(param_value);
+}
+
+void parseArgPair(char* param_name, char* param_value){
+  if(strcmp(param_name,"banner") == 0){
+     parseBannerCmd(param_value);
+  }
+  else{
+     
+  }
+}*/
+
 void respondToRequest(EthernetClient client, char* request){
-                  
-                // Send a response
-                /*client.println("HTTP/1.1 200 OK");
-                client.println("Content-Type: text/html");
-                client.println("Connection: close");
-                //client.println("Refresh: 1");
-                client.println();
-                client.println("<!DOCTYPE html>");
-                client.println("<html>");
-                client.println("<head>");
-                client.println("<title>Arduino LED Control</title>");
-                client.println("</head>");
-                client.println("<body>");
-                client.println("<h1>HELLO</h1>");*/
+  
+                char* firstLine = strtok(request,"\n"); // GET /?banner=hello&other=somethingelse HTTP/1.1
+                if(strstr(firstLine,"GET /favicon.ico HTTP/1.1"))return;
                 
+                strtok(firstLine,"/ ?");                // GET
+                char* params = strtok(0,"/ ?");         //       banner=hello&other=somethingelse
+                char* token = strtok(params,"=");       //       banner
                 
-                char* firstLine = strtok(request,"\n");
-                strtok(firstLine," ");              // GET
-                char* params = strtok(0," /?");     // /?banner=hello&other=somethingelse
-               // params+=2;                        //   banner=hello&other=somethingelse 
-                char* args = strtok(params,"=&");   //   banner,hello,other,somethingelse
+                char* param_name;
+                char* param_value;
                 
-                Serial.println(args);
-                args = strtok(0,"=&"); // first thing after an =
-                Serial.println(args);
-                
-                banner = Banner(&canvas,args,strlen(args));
+                while( token != '\0' ){
+                     param_name = token;
+                     param_value = strtok(0,"& \n");
+                     removePercentTwenties(param_value);
+                     
+                     if(strcmp(param_name,"banner") == 0){
+                        Serial.print("banner command activated!: ");
+                        Serial.println(param_value);
+                        banner = Banner(&canvas,param_value,strlen(param_value));
+                        client.println("HTTP/1.1 200 OK");
+                        client.println("Content-Type: text/plain");
+                        client.println("Connection: close");
+                        client.println();
+                        client.println("Snowduino is now saying the following: ");
+                        client.println(param_value);
+                     }
+                     else{
+                        Serial.print(param_name);
+                        Serial.print(" (unknown command) : ");
+                        Serial.println(param_value); 
+                        client.println("HTTP/1.1 200 OK");
+                        client.println("Content-Type: text/plain");
+                        client.println("Connection: close");
+                        client.println();
+                        client.println("commands: ");
+                        client.println(param_name);
+                        client.println(param_value);
+                     }
+                     
+                    token = strtok(0,"= \n");
+                }          
 }
 
 

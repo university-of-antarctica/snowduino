@@ -37,18 +37,22 @@ class Banner{
     Banner(){
     }
     Banner(Canvas* canvas, const char* phrase, int length){
-      this->phrase = phrase;
-      this->shAmt = 0;
-      this->phraseLength = length;
-      this->nCols = phraseLength*PADDED_CHAR_WIDTH;
       this->canvas = canvas;
-      
+      setPhrase(phrase);
       // calculate the most chars that could possibly be partially
       // visible at the same time
       int divisor = PADDED_CHAR_WIDTH;
       int dividend = canvas->num_cols() - 1;
       int rounded_up = ( dividend  + divisor - 1 ) / divisor;
       MAX_NUM_CHARS_ON_DISPLAY = 1 + rounded_up;
+      
+    }
+    
+    void setPhrase(const char* phrase){
+      this->phrase = phrase;
+      this->shAmt = 0;
+      this->phraseLength = strlen(phrase);
+      this->nCols = phraseLength*PADDED_CHAR_WIDTH;
     }
     
     void print(){
