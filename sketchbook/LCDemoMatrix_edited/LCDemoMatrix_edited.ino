@@ -47,7 +47,7 @@ void setup() {
   server.begin();           // start to listen for clients
   Serial.println("listening...");
   
-  banner = Banner(&canvas,"hello",6);
+  banner = Banner(&canvas,"hello world!",15);
 }
 void loop() { 
   // Periodically print out the remaining free memory
