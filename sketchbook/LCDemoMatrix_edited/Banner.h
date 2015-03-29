@@ -58,8 +58,8 @@ class Banner{
     void print(){
       int perCharacterScroll;
       Character currentChar;
-      int indexOfFirstChar = -shAmt/PADDED_CHAR_WIDTH;
-      int indexOfLastChar = indexOfFirstChar+MAX_NUM_CHARS_ON_DISPLAY;
+      int indexOfFirstChar = -shAmt/PADDED_CHAR_WIDTH-1;
+      int indexOfLastChar = indexOfFirstChar+MAX_NUM_CHARS_ON_DISPLAY+1;
       
       for(int i = indexOfFirstChar; i < indexOfLastChar; ++i){
         perCharacterScroll = shAmt+i*PADDED_CHAR_WIDTH;

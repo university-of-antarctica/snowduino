@@ -6,10 +6,16 @@
 
 class Request{
   private:
-    EthernetClient client_;
+    //EthernetClient* client_;
     char* request_buffer_;
+    bool has_been_read_;
   public:
-    Request(EthernetClient client, char* buffer){
+  
+    Request(){
+    }
+    
+    Request(char* buffer){
+       has_been_read_=false;
        client_ = client;
        request_buffer_ = buffer;
     }
@@ -63,6 +69,7 @@ class Request{
     }
     
     BannerCommand* respond(){
+      has_been_read_=true;
       char* firstLine = strtok(request_buffer_,"\n"); // GET /?banner=hello&other=somethingelse HTTP/1.1
       if(strstr(firstLine,"GET /favicon.ico HTTP/1.1"))return new BannerCommand();
       
