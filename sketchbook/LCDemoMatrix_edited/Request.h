@@ -57,19 +57,31 @@ class Request{
         Serial.println(param_value);
         return new BannerCommand(param_value);
       }
+      
+      else if(strcmp(param_name,"inspect") == 0){
+        BannerCommand* bc = new BannerCommand();
+        bc->what_to_do = 2;
+        return bc;
+      }
+ 
       else{
-        return new BannerCommand();
+        BannerCommand* bc = new BannerCommand();
+        bc->what_to_do= 0;
+        return bc;
       }
     }
     
     BannerCommand* respond(){
       char* firstLine = strtok(request_buffer_,"\n"); // GET /?banner=hello&other=somethingelse HTTP/1.1
-      if(strstr(firstLine,"GET /favicon.ico HTTP/1.1"))return new BannerCommand();
+      if(strstr(firstLine,"GET /favicon.ico HTTP/1.1")){
+        return new BannerCommand();
+      }
       
-      strtok(firstLine,"/ ?");                // GET
-      char* params = strtok(0,"/ ?");         //       banner=hello&other=somethingelse
+      strtok(firstLine,"?");                // GET /
+      char* params = strtok(0," ");         //       banner=hello&other=somethingelse
+      Serial.println(params);
       char* token = strtok(params,"=");       //       banner
-      
+      Serial.println(token);
       char* param_name;
       char* param_value;
       

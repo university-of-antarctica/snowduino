@@ -18,9 +18,14 @@ class NoCommand : public Command{
 */
 class BannerCommand{
   private:
+  
   char* param_value_;
   bool do_nothing_;
+  
+  
   public:
+    int what_to_do = 1;
+
   BannerCommand(char* arg){
     param_value_ = arg;
     do_nothing_=false;

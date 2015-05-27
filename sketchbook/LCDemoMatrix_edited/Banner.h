@@ -9,7 +9,7 @@
 
 class Banner{
   private:
-    const char* phrase;
+    char* bannerBuffer;
     int phraseLength;
     int nCols;
     int shAmt;
@@ -34,11 +34,11 @@ class Banner{
     }
     
     public:
-    Banner(){
-    }
-    Banner(Canvas* canvas, const char* phrase, int length){
+
+    Banner(Canvas* canvas){
       this->canvas = canvas;
-      setPhrase(phrase);
+      bannerBuffer = new char[256];
+
       // calculate the most chars that could possibly be partially
       // visible at the same time
       int divisor = PADDED_CHAR_WIDTH;
@@ -49,12 +49,21 @@ class Banner{
     }
     
     void setPhrase(const char* phrase){
-      this->phrase = phrase;
-      this->shAmt = 0;
       this->phraseLength = strlen(phrase);
+      memcpy(bannerBuffer, phrase, phraseLength);
+      if(phraseLength < 255){
+        bannerBuffer[phraseLength] = '\0';
+      }
+      Serial.println(bannerBuffer);
+      this->shAmt = 0;
       this->nCols = phraseLength*PADDED_CHAR_WIDTH;
     }
     
+    const char* getPhrase(){
+      return bannerBuffer;
+    }
+  
+      
     void print(){
       int perCharacterScroll;
       Character currentChar;
@@ -79,7 +88,7 @@ class Banner{
       int bannerLengthWithAddedClearance = phraseLength+clearance;
       int totalIndex = myMod(index,bannerLengthWithAddedClearance);
       if(totalIndex>=phraseLength)return ' ';
-      return phrase[myMod(index,phraseLength+clearance)];
+      return bannerBuffer[myMod(index,phraseLength+clearance)];
     }
     
     

@@ -28,9 +28,8 @@ Canvas canvas = Canvas(DIN_PIN,CLK_PIN,CS_PIN,NUM_DISPLAYS);
 EthernetServer server(8282);
 
 int counter = 0;
-Banner banner;
-char bannerBuffer[512] = "";
-char requestBuffer[512] = "";
+Banner* banner;
+char requestBuffer[256] = "";
 int requestLength = 0;
 EthernetClient client_;
 
@@ -47,7 +46,8 @@ void setup() {
   server.begin();           // start to listen for clients
   Serial.println("listening...");
   
-  banner = Banner(&canvas,"hello world!",15);
+  banner = new Banner(&canvas);
+  banner->setPhrase("hello world!");
 }
 void loop() { 
   // Periodically print out the remaining free memory
@@ -64,14 +64,18 @@ void loop() {
 
 void processBannerCommand(BannerCommand* cmd ){
   client_.println("HTTP/1.1 200 OK");
+  client_.println(F("Access-Control-Allow-Origin: *"));
+  
   client_.println("Content-Type: text/plain");
   client_.println("Connection: close");
   client_.println();
   //client_.println("Snowduino is now saying the following: ");
   //client_.println(cmd->param_value());
   //banner.setPhrase(cmd.param_value());
-  cmd->sendTo(&banner);
-  client_.println("<p>hello</p>");
+  if(cmd->what_to_do == 1){
+      cmd->sendTo(banner);
+  }
+  client_.write(banner->getPhrase());
   //Serial.print("command description: ");
   //Serial.println(cmd->description);
   delete cmd;
@@ -93,6 +97,9 @@ void beServer(){
                 if(keepRecording){
                   requestBuffer[requestLength] = c;  // save the HTTP request 1 char at a time
                   ++requestLength;
+                  if(requestLength > (144+12)){
+                    keepRecording = false;
+                  }
                 }
                
                 // last line of client request is blank and ends with \n
@@ -137,6 +144,7 @@ void beServer(){
 void writeArduinoOnMatrix() {
   canvas.clearDisplay();
   
-  banner.print();
-  banner.shiftLeft(1);  
+  banner->print();
+  banner->shiftLeft(1);
+  delay(20);
 }

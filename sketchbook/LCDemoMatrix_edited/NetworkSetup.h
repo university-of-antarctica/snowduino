@@ -9,7 +9,7 @@
 
 class NetworkSetup{
   private:
-    byte mac[6] = { 0x00, 0x1D, 0xFE, 0xEA, 0x39, 0x17 };
+    byte mac[6] = { 0x00, 0x13, 0xCA, 0xFE, 0xFA, 0xCE };
     IPAddress ip=(192, 168, 1, 19); // IP address, may need to change depending on network
 
     
@@ -20,7 +20,11 @@ class NetworkSetup{
       digitalWrite(SS_ETHERNET, LOW); // enable ethernet
       Serial.println("disabled sd card, enabled ethernet");
     }
-    
+    void JoinNetworkStatic(){
+      //byte gateway[] = { 192, 168, 0, 1 };                   
+//      byte subnet[] = { 255, 255, 255, 0 };   
+      Ethernet.begin(mac, ip);//, gateway, subnet);
+    }
     void JoinNetwork(){
       Serial.println("Trying to get an IP address using DHCP");
       if (Ethernet.begin(mac) == 0) {
